@@ -1,52 +1,74 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const apiKey = process.env.API_KEY;
+const genAI = new GoogleGenerativeAI(apiKey || 'unconfigured');
 
-if (!apiKey) {
-  throw new Error('API_KEY não configurada no Vercel');
-}
+// ✅ SYSTEM_PROMPT V2.2 COM TODAS MELHORIAS
+const SYSTEM_PROMPT = `Você é o "Impact Prompt Generator", orquestrador semântico de elite. Converta intenções brutas em prompts RTCROS de performance máxima.
 
-const genAI = new GoogleGenerativeAI(apiKey);
+DIRETRIZES IMPLACÁVEIS:
 
-const SYSTEM_PROMPT = `Arquiteto de Prompts Sênior do Método IMPACT. Transforme o pedido em prompt RTCROS para outra IA executar. Retorne APENAS o prompt.
+1. ÂNGULO ÚNICO OBRIGATÓRIO:
+- Transforme SEMPRE temas genéricos em proposições diferenciadas.
+- EXEMPLO OBRIGATÓRIO: "Produtividade" → "Produtividade sem planejamento para quem odeia agendas" OU "Produtividade para procrastinadores crônicos com agenda lotada".
 
-R - Role: [Papel específico].
-T - Task: [Ação no infinitivo].
-C - Context: [Cenário expandido. Inferir público/objetivo se ausente].
-R - Restrictions: [Limites de tamanho, foco prático, sem generalidades].
-O - Output: [Formatação exata].
-S - Style: [Tom + CoT se preciso].
+2. OBJETIVO QUANTIFICADO:
+- SEMPRE especifique métrica mensurável no campo C.
+- Exemplos: retenção >65%, comentários +20%, CTR >8%, shares >15%.
 
-Prompt final sem ambiguidades.`;  // Encurtado para <2k tokens
+3. TRATAMENTO DE LACUNAS:
+- Infira público se vazio (ex: profissionais 25-35 anos).
+- Nível automático: Intermediário (salvo indicação contrária).
+
+4. REGRAS RTCROS OBRIGATÓRIAS:
+R - Role: Persona máxima + registro (Mentor Disruptivo, Coach Prático).
+T - Task: Verbos ação + meta operacional.
+C - Context: Dores específicas + métrica quantificada.
+R - Restrictions: 
+  - 1ª dica CONTRAINTUITIVA obrigatória.
+  - Proibido: Pomodoro, Eat The Frog, Eisenhower (liste clichês por nicho).
+  - AUDITÓRIA: Cada restrição serve o objetivo mensurável.
+O - Output: Formatação visual com minutagem/tabelas.
+S - Style: Mood board (Tom provocativo→motivacional, ritmo crescente).
+
+5. SEO AUTOMÁTICO (Conteúdo digital):
+- Título e Gancho com palavras-chave de cauda longa.
+
+MODO: Você NÃO responde a ideia. Dá FORMA ESTRATÉGICA para QUALQUER LLM executar perfeitamente.`;
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Use POST.' });
-  }
-
-  try {
-    const { idea, context, objective } = req.body;
-
-    if (!idea) {
-      return res.status(400).json({ error: 'Ideia obrigatória.' });
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed. Use POST.' });
     }
 
-    let userPrompt = `Pedido: ${idea}\n${context ? `Contexto: ${context}\n` : ''}${objective ? `Objetivo: ${objective}` : ''}`;
+    if (!apiKey) {
+        return res.status(500).json({ error: 'A Chave de API (API_KEY) não está configurada no servidor.' });
+    }
 
-    // Modelo estável para quota nível 1 + systemInstruction
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",  // Funciona com quota baixa, rápido
-      systemInstruction: SYSTEM_PROMPT
-    });
+    try {
+        const { idea, context, objective } = req.body;
 
-    console.log('Gerando com prompt:', userPrompt.substring(0, 200) + '...');  // Log Vercel
+        if (!idea) {
+            return res.status(400).json({ error: 'A ideia principal é obrigatória.' });
+        }
 
-    const result = await model.generateContent(userPrompt);
-    const text = await result.response.text();
+        let userPrompt = `Pedido original: ${idea}\n`;
+        if (context) userPrompt += `Contexto/Público-alvo: ${context}\n`;
+        if (objective) userPrompt += `Objetivo: ${objective}\n`;
 
-    return res.status(200).json({ prompt: text.trim() });
-  } catch (error) {
-    console.error('Erro completo:', error.message, error.status);
-    return res.status(500).json({ error: 'Erro IA: ' + error.message });
-  }
+        // ✅ MODELO ATUALIZADO
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-pro-preview-12-17",  // ✅ SUPORTE ATUAL
+            systemInstruction: SYSTEM_PROMPT
+        });
+
+        const result = await model.generateContent(userPrompt);
+        const response = await result.response;
+        const text = response.text();
+
+        return res.status(200).json({ prompt: text.trim() });
+    } catch (error) {
+        console.error('Erro na Vercel Serverless Function:', error);
+        return res.status(500).json({ error: 'Falha ao comunicar com a IA. Tente novamente mais tarde.' });
+    }
 }
