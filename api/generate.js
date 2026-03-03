@@ -1,40 +1,48 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const SYSTEM_PROMPT = `Você é o "Impact Prompt Generator"...`; // (Mantenha seu prompt)
+const SYSTEM_PROMPT = `Você é o "Impact Prompt Generator", orquestrador semântico de elite. Converta intenções brutas em prompts RTCROS de performance máxima.`; // (Mantenha seu prompt original completo aqui)
 
 export default async function handler(req, res) {
+    // Garante que o Vercel não tente processar requisições que não sejam POST
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Método não permitido' });
+    }
+
     const apiKey = process.env.API_KEY;
 
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Use POST' });
-    if (!apiKey) return res.status(500).json({ error: 'API_KEY ausente no ambiente do servidor.' });
+    if (!apiKey) {
+        return res.status(500).json({ error: 'Erro: Variável API_KEY não configurada no painel do Vercel.' });
+    }
 
     try {
         const { idea, context, objective } = req.body;
+        
+        // Inicializa o SDK dentro do handler
         const genAI = new GoogleGenerativeAI(apiKey);
 
-        // ATUALIZADO PARA O MODELO 2026
+        // Configuração do Modelo Gemini 3
         const model = genAI.getGenerativeModel({
-            model: "gemini-3-flash-preview", // Nome oficial atualizado
+            model: "gemini-3-flash-preview", 
             systemInstruction: SYSTEM_PROMPT
         });
 
-        // Montando a query de forma mais limpa para o modelo
-        const input = `Gerar prompt para: ${idea}. Contexto: ${context || 'N/A'}. Objetivo: ${objective || 'N/A'}.`;
+        const input = `Ideia: ${idea}\nContexto: ${context || 'N/A'}\nObjetivo: ${objective || 'N/A'}`;
 
         const result = await model.generateContent(input);
-        
-        // Em 2026, a resposta é acessada diretamente assim:
-        const text = result.response.text();
+        const response = await result.response;
+        const text = response.text();
 
+        // Retorno de Sucesso sempre como JSON
         return res.status(200).json({ prompt: text.trim() });
 
     } catch (error) {
-        console.error('ERRO NA API:', error.message);
+        console.error('Erro na API Gemini:', error);
         
-        // Isso impede o erro de "Unexpected token A" no navegador
+        // O segredo está aqui: sempre retornar um JSON, mesmo no erro
+        // Isso evita o erro de "Unexpected token A" no navegador
         return res.status(500).json({ 
-            error: "Falha na geração", 
-            details: error.message 
+            error: "Falha na geração do prompt",
+            message: error.message 
         });
     }
 }
