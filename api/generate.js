@@ -1,8 +1,36 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const apiKey = process.env.API_KEY;
-const genAI = new GoogleGenerativeAI(apiKey || 'unconfigured');
+export default async function handler(req, res) {
+    // Puxa direto das variáveis de ambiente da Vercel
+    const apiKey = process.env.API_KEY;
 
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Método não permitido' });
+    }
+
+    if (!apiKey) {
+        return res.status(500).json({ error: 'Chave API_KEY não encontrada na Vercel.' });
+    }
+
+    try {
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const { idea, context, objective } = req.body;
+
+        // Usando o modelo Pro que você queria
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.0-pro-exp-02-05", // ID estável e potente
+        });
+
+        const promptFinal = `[COLE SEU SYSTEM_PROMPT V2.2 AQUI]\n\nIdeia: ${idea}\nContexto: ${context}\nObjetivo: ${objective}`;
+
+        const result = await model.generateContent(promptFinal);
+        const response = await result.response;
+        
+        return res.status(200).json({ prompt: response.text() });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+}
 // ✅ SYSTEM_PROMPT V2.2 COM TODAS MELHORIAS
 const SYSTEM_PROMPT = `Você é o "Impact Prompt Generator", orquestrador semântico de elite. Converta intenções brutas em prompts RTCROS de performance máxima.
 
