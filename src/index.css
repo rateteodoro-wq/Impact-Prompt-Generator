@@ -4,37 +4,10 @@
 
 @layer base {
   body {
-    /* Fundo off-white e texto azul ardósia escuro para melhor legibilidade */
-    @apply bg-slate-50 text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  }
-}
-
-@layer components {
-  /* Scrollbar Minimalista para Fundo Claro */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-slate-300 rounded-full; /* Cinza discreto */
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-slate-400;
-  }
-
-  /* Classe utilitária para os Cards que você deve ter no App.jsx */
-  .card-premium {
-    @apply bg-white border border-slate-200 shadow-sm rounded-xl transition-all duration-200;
-  }
-
-  /* Estilo para os inputs para tirar o aspecto escuro */
-  .input-modern {
-    @apply bg-white border border-slate-300 text-slate-900 placeholder:text-slate-400 
-           focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none 
-           rounded-lg transition-all;
+    /* FORÇANDO O BRANCO AQUI */
+    background-color: #f8fafc !important; 
+    color: #0f172a !important;
+    antialiased: true;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
 }
