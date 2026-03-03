@@ -19,7 +19,6 @@ function App() {
         setGeneratedPrompt('');
 
         try {
-            // ✅ CONEXÃO COM A VERCEL: Chama sua função em api/generate.js
             const response = await fetch('/api/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -49,7 +48,6 @@ function App() {
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-gray-100 flex flex-col font-sans">
-            {/* Header Minimalista Dark */}
             <header className="border-b border-gray-800/60 bg-black/40 backdrop-blur-md sticky top-0 z-10 px-6 py-4">
                 <div className="max-w-7xl mx-auto flex items-center gap-2">
                     <div className="w-8 h-8 rounded-md bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
@@ -62,8 +60,6 @@ function App() {
             </header>
 
             <main className="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start mt-4">
-
-                {/* Lado Esquerdo: Formulário */}
                 <div className="space-y-8">
                     <div>
                         <h2 className="text-2xl font-semibold mb-2 text-white">Transforme ideias cruas.</h2>
@@ -121,11 +117,43 @@ function App() {
                     </form>
                 </div>
 
-                {/* Lado Direito: Resultado */}
                 <div className="relative h-full min-h-[500px] flex flex-col">
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="text-xs font-semibold tracking-wider text-gray-400 uppercase">Output Gerado</h3>
                         {generatedPrompt && (
                             <button
                                 onClick={copyToClipboard}
-                                className="flex items-center gap-2 text-xs font-medium
+                                className="flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors px-3 py-1.5 rounded-md hover:bg-gray-800"
+                            >
+                                {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                                {copied ? 'Copiado!' : 'Copiar'}
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="flex-1 bg-[#111]/80 backdrop-blur-md border border-gray-800 rounded-xl p-1 overflow-hidden">
+                        <div className="h-full bg-black rounded-lg p-5 overflow-y-auto font-mono text-sm leading-relaxed text-gray-300">
+                            {!generatedPrompt && !loading && (
+                                <div className="h-full flex flex-col items-center justify-center text-gray-600 text-center">
+                                    <Wand2 size={24} className="mb-3 opacity-20" />
+                                    <p>O prompt RTCROS aparecerá aqui.</p>
+                                </div>
+                            )}
+                            {loading && (
+                                <div className="h-full flex items-center justify-center text-indigo-500/50 animate-pulse">
+                                    Gerando...
+                                </div>
+                            )}
+                            {generatedPrompt && !loading && (
+                                <div className="whitespace-pre-wrap">{generatedPrompt}</div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+}
+
+export default App;
+               
