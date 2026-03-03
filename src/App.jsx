@@ -22,23 +22,34 @@ function App() {
     const [error, setError] = useState('');
 
     const handleGenerate = async (e) => {
-        e.preventDefault();
-        if (!idea.trim()) return;
+    e.preventDefault();
+    if (!idea.trim()) return;
 
-        setLoading(true);
-        setError('');
+    setLoading(true);
+    setError('');
+    setGeneratedPrompt('');
 
-        try {
-            const apiKey = import.meta.env.VITE_API_KEY;
-            if (!apiKey) {
-                throw new Error("A chave de API (VITE_API_KEY) não está configurada no arquivo .env");
-            }
+    try {
+        // Chamada para a Serverless Function da Vercel
+        const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idea, context, objective }),
+        });
 
-            const genAI = new GoogleGenerativeAI(apiKey);
-            const model = genAI.getGenerativeModel({
-                model: "gemini-2.5-flash",
-                systemInstruction: SYSTEM_PROMPT
-            });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Erro na geração');
+        }
+
+        setGeneratedPrompt(data.prompt);
+    } catch (err) {
+        setError("Falha: " + err.message);
+    } finally {
+        setLoading(false);
+    }
+};
 
             let userPrompt = `Pedido original: ${idea}\n`;
             if (context) userPrompt += `Contexto/Público-alvo: ${context}\n`;
