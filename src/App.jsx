@@ -35,7 +35,6 @@ function App() {
             }
 
             const genAI = new GoogleGenerativeAI(apiKey);
-            // Corrigi para o modelo estável mais atual (Gemini 1.5 Pro ou Flash conforme sua cota)
             const model = genAI.getGenerativeModel({
                 model: "gemini-1.5-flash", 
                 systemInstruction: SYSTEM_PROMPT
@@ -66,7 +65,6 @@ function App() {
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
-            {/* Header Minimalista Light */}
             <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-10 px-6 py-4">
                 <div className="max-w-7xl mx-auto flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-sm">
@@ -78,85 +76,85 @@ function App() {
                 </div>
             </header>
 
-            {/* Main Content */}
             <main className="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start mt-4">
-
-                {/* Lado Esquerdo: Formulário */}
                 <div className="space-y-8">
                     <div>
                         <h2 className="text-3xl font-extrabold text-slate-900 mb-3">Sintetize sua estratégia.</h2>
                         <p className="text-slate-600 text-base leading-relaxed">
-                            O motor <span className="font-semibold text-slate-900">RTCROS</span> transforma pedidos vagos em comandos de elite para qualquer IA.
+                            O motor <span className="font-semibold text-slate-900">RTCROS</span> transforma pedidos vagos em comandos de elite.
                         </p>
                     </div>
 
                     <form onSubmit={handleGenerate} className="space-y-6">
                         <div className="space-y-2">
-                            <label htmlFor="idea" className="block text-xs font-bold tracking-wider text-slate-500 uppercase">
-                                Ideia Crua / Pedido Principal *
-                            </label>
+                            <label className="block text-xs font-bold tracking-wider text-slate-500 uppercase">Ideia Crua *</label>
                             <textarea
-                                id="idea"
                                 value={idea}
                                 onChange={(e) => setIdea(e.target.value)}
                                 required
                                 rows={5}
-                                className="w-full bg-white border border-slate-300 rounded-xl p-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none shadow-sm placeholder-slate-400"
-                                placeholder="Ex: Quero um post de instagram sobre IA para advogados..."
+                                className="w-full bg-white border border-slate-300 rounded-xl p-4 text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all shadow-sm"
+                                placeholder="Ex: Post sobre marcenaria..."
                             />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label htmlFor="context" className="block text-xs font-bold tracking-wider text-slate-500 uppercase">
-                                    Contexto / Público
-                                </label>
-                                <input
-                                    type="text"
-                                    id="context"
-                                    value={context}
-                                    onChange={(e) => setContext(e.target.value)}
-                                    className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
-                                    placeholder="Ex: Advogados seniores"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label htmlFor="objective" className="block text-xs font-bold tracking-wider text-slate-500 uppercase">
-                                    Objetivo Mensurável
-                                </label>
-                                <input
-                                    type="text"
-                                    id="objective"
-                                    value={objective}
-                                    onChange={(e) => setObjective(e.target.value)}
-                                    className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
-                                    placeholder="Ex: 50 salvamentos"
-                                />
-                            </div>
+                            <input
+                                type="text"
+                                value={context}
+                                onChange={(e) => setContext(e.target.value)}
+                                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm shadow-sm"
+                                placeholder="Contexto (Opcional)"
+                            />
+                            <input
+                                type="text"
+                                value={objective}
+                                onChange={(e) => setObjective(e.target.value)}
+                                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm shadow-sm"
+                                placeholder="Objetivo (Opcional)"
+                            />
                         </div>
-
-                        {error && (
-                            <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm font-medium">
-                                {error}
-                            </div>
-                        )}
 
                         <button
                             type="submit"
                             disabled={loading || !idea.trim()}
-                            className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-bold py-4 px-4 rounded-xl text-sm shadow-lg shadow-indigo-200"
+                            className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition-all font-bold py-4 px-4 rounded-xl text-sm shadow-lg shadow-indigo-200"
                         >
                             {loading ? <Loader2 size={20} className="animate-spin" /> : <Wand2 size={20} />}
-                            {loading ? 'Arquitetando Prompt...' : 'Gerar Prompt IMPACT'}
+                            {loading ? 'Arquitetando...' : 'Gerar Prompt IMPACT'}
                         </button>
                     </form>
                 </div>
 
-                {/* Lado Direito: Resultado (Estilo Card) */}
                 <div className="relative h-full min-h-[500px] flex flex-col">
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xs font-bold tracking-wider text-slate-500 uppercase">Output Estruturado</h3>
-
+                        <h3 className="text-xs font-bold tracking-wider text-slate-500 uppercase">Output</h3>
                         {generatedPrompt && (
                             <button
+                                onClick={copyToClipboard}
+                                className={`flex items-center gap-2 text-xs font-bold transition-all px-4 py-2 rounded-full shadow-sm ${
+                                    copied ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-white text-slate-700 border border-slate-200'
+                                }`}
+                            >
+                                {copied ? <Check size={14} /> : <Copy size={14} />}
+                                {copied ? 'Copiado!' : 'Copiar'}
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="flex-1 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden flex flex-col">
+                        <div className="flex-1 p-6 overflow-y-auto font-mono text-sm text-slate-700 bg-slate-50/30">
+                            {loading ? (
+                                <div className="h-full flex items-center justify-center animate-pulse text-slate-400">Gerando...</div>
+                            ) : (
+                                <div className="whitespace-pre-wrap">{generatedPrompt || "O prompt aparecerá aqui."}</div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+}
+
+export default App;
