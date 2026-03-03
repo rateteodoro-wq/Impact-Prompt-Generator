@@ -12,12 +12,10 @@ DIRETRIZES IMPLACÁVEIS:
 MODO: NÃO responda ideia. Gere PROMPT estratégico.`;
 
 export default async function handler(req, res) {
-    // 1. Verificação de Método
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Método não permitido. Use POST.' });
+        return res.status(405).json({ error: 'Método não permitido.' });
     }
 
-    // 2. Verificação de API KEY
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
         return res.status(500).json({ error: 'API_KEY não configurada no Vercel.' });
@@ -25,16 +23,11 @@ export default async function handler(req, res) {
 
     try {
         const { idea, context, objective } = req.body;
-
-        if (!idea) {
-            return res.status(400).json({ error: 'O campo "ideia" é obrigatório.' });
-        }
-
         const genAI = new GoogleGenerativeAI(apiKey);
         
-        // Usando o modelo que você confirmou no AI Studio
+        // Usando o modelo estável para evitar o erro de "Error fetching"
         const model = genAI.getGenerativeModel({
-            model: "gemini-3-flash-preview", 
+            model: "gemini-1.5-flash", 
             systemInstruction: SYSTEM_PROMPT
         });
 
@@ -42,9 +35,8 @@ export default async function handler(req, res) {
 
         const result = await model.generateContent(input);
         const response = await result.response;
-        const text = response.text();
+        const text = response.text(); 
 
-        // 3. Resposta de Sucesso
         return res.status(200).json({ prompt: text.trim() });
 
     } catch (error) {
@@ -54,4 +46,4 @@ export default async function handler(req, res) {
             details: error.message 
         });
     }
-} // <--- ESTA CHAVE É ESSENCIAL PARA FECHAR A FUNÇÃO HANDLER
+}
