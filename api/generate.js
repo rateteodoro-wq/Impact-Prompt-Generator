@@ -1,39 +1,35 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const SYSTEM_PROMPT = `Você é o "Impact Prompt Generator", orquestrador semântico de elite. Converta intenções brutas em prompts RTCROS de performance máxima.`;
+const SYSTEM_PROMPT = `Você é o "Impact Prompt Generator" v3.1. Orquestrador semântico de elite. Converta intenções brutas em prompts RTCROS de performance máxima para modelos de Fronteira (Gemini 3).`;
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido.' });
 
     const apiKey = process.env.API_KEY; 
-    if (!apiKey) return res.status(500).json({ error: 'API_KEY não configurada na Vercel.' });
+    if (!apiKey) return res.status(500).json({ error: 'Erro: API_KEY não configurada na Vercel.' });
 
     try {
         const { idea, context, objective } = req.body;
         const genAI = new GoogleGenerativeAI(apiKey);
         
-        // ✅ O ID EXATO PARA O 2.0 PRO EM 2026
+        // ✅ USANDO O ALIAS "LATEST" DE 2026 
+        // Isso evita o erro 404 porque o Google gerencia qual versão está ativa.
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-pro-exp-02-05" 
+            model: "gemini-pro-latest" 
         });
 
-        // Montagem direta do conteúdo
         const promptFinal = `${SYSTEM_PROMPT}\n\nUSER REQUEST:\nIdeia: ${idea}\nContexto: ${context}\nObjetivo: ${objective}`;
 
+        // Chamada compatível com o SDK 0.21.0 que você tem
         const result = await model.generateContent(promptFinal);
         const response = await result.response;
-        const text = response.text();
-
-        if (!text) throw new Error("Resposta vazia da IA.");
-
-        return res.status(200).json({ prompt: text.trim() });
+        
+        return res.status(200).json({ prompt: response.text().trim() });
 
     } catch (error) {
-        console.error('ERRO DETALHADO:', error);
-        
-        // Tratamento amigável do erro
+        console.error('ERRO GOOGLE 2026:', error);
         return res.status(500).json({ 
-            error: 'Erro no motor Gemini 2.0 Pro: ' + error.message 
+            error: 'Erro no motor Gemini 3: ' + error.message 
         });
     }
-}
+}     
