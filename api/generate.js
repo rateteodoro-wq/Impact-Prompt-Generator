@@ -16,33 +16,28 @@ export default async function handler(req, res) {
 
     try {
         const { idea, context, objective } = req.body;
-        
-        // Inicializa o SDK dentro do handler
         const genAI = new GoogleGenerativeAI(apiKey);
 
-        // Configuração do Modelo Gemini 3
+        // 1. Tente usar o alias mais estável
         const model = genAI.getGenerativeModel({
-            model: "gemini-3-flash-preview", 
+            model: "gemini-3-flash-preview", // Teste com esse primeiro!
             systemInstruction: SYSTEM_PROMPT
         });
 
-        const input = `Ideia: ${idea}\nContexto: ${context || 'N/A'}\nObjetivo: ${objective || 'N/A'}`;
+        const input = `Ideia: ${idea}\nContexto: ${context || ''}\nObjetivo: ${objective || ''}`;
 
+        // 2. Em 2026, algumas versões do SDK pedem o await direto no response
         const result = await model.generateContent(input);
-        const response = await result.response;
-        const text = response.text();
+        const text = result.response.text(); 
 
-        // Retorno de Sucesso sempre como JSON
-        return res.status(200).json({ prompt: text.trim() });
+        return res.status(200).json({ prompt: text });
 
     } catch (error) {
-        console.error('Erro na API Gemini:', error);
+        // ESSA LINHA É A CHAVE: Ela vai cuspir o erro real no console do Vercel
+        console.error('ERRO REAL DO GOOGLE:', error.message);
         
-        // O segredo está aqui: sempre retornar um JSON, mesmo no erro
-        // Isso evita o erro de "Unexpected token A" no navegador
         return res.status(500).json({ 
-            error: "Falha na geração do prompt",
-            message: error.message 
+            error: "Falha na comunicação com a IA",
+            details: error.message 
         });
     }
-}
