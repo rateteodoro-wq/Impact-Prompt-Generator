@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         
         // Seleção do modelo Gemini 3.1 Flash Lite (Lançamento Março/2026)
         const model = genAI.getGenerativeModel({
-            model: "gemini-3.1-flash-lite-preview" 
+            model: "gemini-3.1-flash-preview"
         });   
 
         const promptFinal = `${SYSTEM_PROMPT}\n\nUSER REQUEST:\nIdeia: ${idea}\nContexto: ${context || 'Não informado'}\nObjetivo: ${objective || 'Não informado'}`;
