@@ -1,25 +1,40 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const SYSTEM_PROMPT = `Você é o "Impact Prompt Generator"...`; // (Mantenha seu prompt)
 
 export default async function handler(req, res) {
-    const apiKey = process.env.OPENAI_API_KEY; // Nome que você salvou no Vercel
-    const openai = new OpenAI({ apiKey });
+    const apiKey = process.env.API_KEY;
 
     if (req.method !== 'POST') return res.status(405).json({ error: 'Use POST' });
-    if (!apiKey) return res.status(500).json({ error: 'Chave não encontrada no Vercel' });
+    if (!apiKey) return res.status(500).json({ error: 'API_KEY ausente no ambiente do servidor.' });
 
     try {
         const { idea, context, objective } = req.body;
-        
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4o", // Ou gpt-3.5-turbo
-            messages: [
-                { role: "system", content: "Você é o Impact Prompt Generator..." },
-                { role: "user", content: `Ideia: ${idea}, Contexto: ${context}, Objetivo: ${objective}` }
-            ],
+        const genAI = new GoogleGenerativeAI(apiKey);
+
+        // ATUALIZADO PARA O MODELO 2026
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.0-flash", // Nome oficial atualizado
+            systemInstruction: SYSTEM_PROMPT
         });
 
-        return res.status(200).json({ prompt: completion.choices[0].message.content });
+        // Montando a query de forma mais limpa para o modelo
+        const input = `Gerar prompt para: ${idea}. Contexto: ${context || 'N/A'}. Objetivo: ${objective || 'N/A'}.`;
+
+        const result = await model.generateContent(input);
+        
+        // Em 2026, a resposta é acessada diretamente assim:
+        const text = result.response.text();
+
+        return res.status(200).json({ prompt: text.trim() });
+
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        console.error('ERRO NA API:', error.message);
+        
+        // Isso impede o erro de "Unexpected token A" no navegador
+        return res.status(500).json({ 
+            error: "Falha na geração", 
+            details: error.message 
+        });
     }
 }
