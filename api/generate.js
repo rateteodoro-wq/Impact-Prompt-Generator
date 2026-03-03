@@ -11,18 +11,20 @@ export default async function handler(req, res) {
     try {
         const { idea, context, objective } = req.body;
         const genAI = new GoogleGenerativeAI(apiKey);
-       // Mude para o Flash Lite 3.1 (O modelo mais rápido e disponível hoje)
-const model = genAI.getGenerativeModel({
-    model: "gemini-3.1-flash-lite-preview" 
-});    
+        
+        // Seleção do modelo Gemini 3.1 Flash Lite (Lançamento Março/2026)
+        const model = genAI.getGenerativeModel({
+            model: "gemini-3.1-flash-lite-preview" 
+        });   
 
-        const promptFinal = `${SYSTEM_PROMPT}\n\nUSER REQUEST:\nIdeia: ${idea}\nContexto: ${context}\nObjetivo: ${objective}`;
+        const promptFinal = `${SYSTEM_PROMPT}\n\nUSER REQUEST:\nIdeia: ${idea}\nContexto: ${context || 'Não informado'}\nObjetivo: ${objective || 'Não informado'}`;
 
-        // Chamada compatível com o SDK 0.21.0 que você tem
+        // Execução da geração
         const result = await model.generateContent(promptFinal);
         const response = await result.response;
+        const text = response.text();
         
-        return res.status(200).json({ prompt: response.text().trim() });
+        return res.status(200).json({ prompt: text.trim() });
 
     } catch (error) {
         console.error('ERRO GOOGLE 2026:', error);
@@ -30,4 +32,4 @@ const model = genAI.getGenerativeModel({
             error: 'Erro no motor Gemini 3: ' + error.message 
         });
     }
-}     
+}
