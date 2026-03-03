@@ -3,25 +3,24 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const apiKey = process.env.API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 
-const SYSTEM_PROMPT = `Você é o "Impact Prompt Generator" v3.1. Converta intenções em prompts RTCROS elite para Gemini 3.`;
+const SYSTEM_PROMPT = `Impact Prompt Generator v3.1. RTCROS prompts para Gemini 3.`;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST' });
 
   const { idea, context, objective } = req.body;
-  if (!idea) return res.status(400).json({ error: 'Ideia obrigatória' });
+  if (!idea) return res.status(400).json({ error: 'Ideia' });
 
-  const promptFinal = `${SYSTEM_PROMPT}\n\nUSER:\nIdeia: ${idea}\nContexto: ${context || 'N/A'}\nObjetivo: ${objective || 'N/A'}`;
+  const promptFinal = `${SYSTEM_PROMPT}\n\nIdeia: ${idea}\n${context ? `Contexto: ${context}` : ''}\n${objective ? `Objetivo: ${objective}` : ''}`;
 
   const model = genAI.getGenerativeModel({
-    model: "gemini-3.1-flash-preview"  // ← Nome correto 2026
+    model: "gemini-flash-latest"  // ✅ Funciona quota 1, auto-update
   });
 
   try {
     const result = await model.generateContent(promptFinal);
-    return res.status(200).json({ prompt: await result.response.text() });
+    res.status(200).json({ prompt: await result.response.text() });
   } catch (error) {
-    console.error('Erro:', error);
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 }
