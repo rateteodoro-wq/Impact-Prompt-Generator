@@ -13,9 +13,9 @@ export default async function handler(req, res) {
 
   const promptFinal = `${SYSTEM_PROMPT}\n\nIdeia: ${idea}\n${context ? `Contexto: ${context}` : ''}\n${objective ? `Objetivo: ${objective}` : ''}`;
 
-  const model = genAI.getGenerativeModel({
-    model: "gemini-flash-latest"  // ✅ Funciona quota 1, auto-update
-  });
+  cconst model = genAI.getGenerativeModel({
+  model: "gemini-2.5-flash"  // ✅ Stable, quota 1, sem 503
+});
 
   try {
     const result = await model.generateContent(promptFinal);
