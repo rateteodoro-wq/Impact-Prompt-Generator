@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
         // ATUALIZADO PARA O MODELO 2026
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash", // Nome oficial atualizado
+            model: "gemini-3-flash-preview", // Nome oficial atualizado
             systemInstruction: SYSTEM_PROMPT
         });
 
