@@ -11,12 +11,10 @@ export default async function handler(req, res) {
     try {
         const { idea, context, objective } = req.body;
         const genAI = new GoogleGenerativeAI(apiKey);
-        
-        // ✅ USANDO O ALIAS "LATEST" DE 2026 
-        // Isso evita o erro 404 porque o Google gerencia qual versão está ativa.
-        const model = genAI.getGenerativeModel({
-            model: "gemini-pro-latest" 
-        });
+       // Mude para o Flash Lite 3.1 (O modelo mais rápido e disponível hoje)
+const model = genAI.getGenerativeModel({
+    model: "gemini-3.1-flash-lite-preview" 
+});    
 
         const promptFinal = `${SYSTEM_PROMPT}\n\nUSER REQUEST:\nIdeia: ${idea}\nContexto: ${context}\nObjetivo: ${objective}`;
 
