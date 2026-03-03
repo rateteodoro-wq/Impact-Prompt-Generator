@@ -36,9 +36,9 @@ export default async function handler(req, res) {
         if (context) userPrompt += `Contexto/Público-alvo: ${context}\n`;
         if (objective) userPrompt += `Objetivo: ${objective}\n`;
 
-        // Inicializa o modelo (gemini-2.5-flash com a system instruction injetada hardcoded)
+        // Inicializa o modelo (gemini-3-flash-preview com a system instruction injetada hardcoded)
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash",
+            model: "gemini-3-flash-preview",
             systemInstruction: SYSTEM_PROMPT
         });
 
