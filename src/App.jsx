@@ -105,3 +105,39 @@ function App() {
                         >
                             {loading ? <Loader2 size={20} className="animate-spin" /> : <Wand2 size={20} />}
                             {loading ? 'Arquitetando...' : 'Gerar Prompt IMPACT'}
+                        </button>
+                    </form>
+                    {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                </div>
+
+                <div className="lg:sticky lg:top-24 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-bold tracking-wider text-slate-500 uppercase">Prompt Gerado</h3>
+                        {generatedPrompt && (
+                            <button 
+                                onClick={copyToClipboard}
+                                className="flex items-center gap-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                            >
+                                {copied ? <Check size={14} /> : <Copy size={14} />}
+                                {copied ? 'Copiado!' : 'Copiar'}
+                            </button>
+                        )}
+                    </div>
+                    
+                    <div className="min-h-[300px] w-full bg-slate-900 rounded-2xl p-6 text-slate-300 text-sm font-mono leading-relaxed shadow-xl border border-slate-800 relative overflow-hidden">
+                        {generatedPrompt ? (
+                            <div className="whitespace-pre-wrap">{generatedPrompt}</div>
+                        ) : (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-600 p-8 text-center space-y-3">
+                                <Sparkles size={32} className="opacity-20" />
+                                <p>Preencha os dados e gere seu prompt de alto impacto.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+}
+
+export default App;
