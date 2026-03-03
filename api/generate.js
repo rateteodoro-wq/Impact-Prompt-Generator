@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const apiKey = process.env.API_KEY;
-const genAI = new GoogleGenerativeAI(apiKey || 'unconfigured');
+const genAI = new GoogleGenerativeAI(apiKey);
 
 // ✅ SYSTEM_PROMPT V2.2 COM TODAS MELHORIAS
 const SYSTEM_PROMPT = `Você é o "Impact Prompt Generator", orquestrador semântico de elite. Converta intenções brutas em prompts RTCROS de performance máxima.
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
 
         // ✅ MODELO ATUALIZADO
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-pro-preview-12-17",  // ✅ SUPORTE ATUAL
+            model: "gemini-2.5-pro",  // ✅ SUPORTE ATUAL
             systemInstruction: SYSTEM_PROMPT
         });
 
