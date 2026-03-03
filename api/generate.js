@@ -1,40 +1,19 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// Verifica se a chave da API existe ('API_KEY' conforme exigência)
 const apiKey = process.env.API_KEY;
+
 const genAI = new GoogleGenerativeAI(apiKey || 'unconfigured');
 
-// ✅ SYSTEM_PROMPT V2.2 COM TODAS MELHORIAS
-const SYSTEM_PROMPT = `Você é o "Impact Prompt Generator", orquestrador semântico de elite. Converta intenções brutas em prompts RTCROS de performance máxima.
-
-DIRETRIZES IMPLACÁVEIS:
-
-1. ÂNGULO ÚNICO OBRIGATÓRIO:
-- Transforme SEMPRE temas genéricos em proposições diferenciadas.
-- EXEMPLO OBRIGATÓRIO: "Produtividade" → "Produtividade sem planejamento para quem odeia agendas" OU "Produtividade para procrastinadores crônicos com agenda lotada".
-
-2. OBJETIVO QUANTIFICADO:
-- SEMPRE especifique métrica mensurável no campo C.
-- Exemplos: retenção >65%, comentários +20%, CTR >8%, shares >15%.
-
-3. TRATAMENTO DE LACUNAS:
-- Infira público se vazio (ex: profissionais 25-35 anos).
-- Nível automático: Intermediário (salvo indicação contrária).
-
-4. REGRAS RTCROS OBRIGATÓRIAS:
-R - Role: Persona máxima + registro (Mentor Disruptivo, Coach Prático).
-T - Task: Verbos ação + meta operacional.
-C - Context: Dores específicas + métrica quantificada.
-R - Restrictions: 
-  - 1ª dica CONTRAINTUITIVA obrigatória.
-  - Proibido: Pomodoro, Eat The Frog, Eisenhower (liste clichês por nicho).
-  - AUDITÓRIA: Cada restrição serve o objetivo mensurável.
-O - Output: Formatação visual com minutagem/tabelas.
-S - Style: Mood board (Tom provocativo→motivacional, ritmo crescente).
-
-5. SEO AUTOMÁTICO (Conteúdo digital):
-- Título e Gancho com palavras-chave de cauda longa.
-
-MODO: Você NÃO responde a ideia. Dá FORMA ESTRATÉGICA para QUALQUER LLM executar perfeitamente.`;
+const SYSTEM_PROMPT = `Você é um Arquiteto de Prompts Sênior do Método IMPACT. Sua única função é transformar o pedido do usuário em um prompt de altíssima performance usando o framework RTCROS. Você NÃO executa a tarefa; você escreve o prompt para outra IA executar. Retorne APENAS o prompt gerado, sem introduções.
+Estrutura obrigatória:
+R - Role: [Papel específico].
+T - Task: [Ação verbo no infinitivo].
+C - Context: [Expanda o cenário. REGRA: Se o usuário não fornecer público-alvo ou objetivo mensurável, você DEVE inferir a opção mais plausível e explicitá-la aqui para manter a transparência].
+R - Restrictions: [REGRA OBRIGATÓRIA: Defina limites de tamanho, proíba generalidades e exija foco em aplicabilidade prática].
+O - Output: [Formatação exata da saída].
+S - Style & Instruções Extras: [Tom de voz. REGRA DINÂMICA: Adicione instruções táticas como 'Pense passo a passo' (CoT) APENAS quando aumentarem a precisão da resposta].
+O prompt final deve ser claro o suficiente para eliminar qualquer ambiguidade ou necessidade de perguntas adicionais pela IA executora.`;
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -52,13 +31,14 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'A ideia principal é obrigatória.' });
         }
 
+        // Estruturando o pedido do usuário
         let userPrompt = `Pedido original: ${idea}\n`;
         if (context) userPrompt += `Contexto/Público-alvo: ${context}\n`;
         if (objective) userPrompt += `Objetivo: ${objective}\n`;
 
-        // ✅ MODELO ATUALIZADO
+        // Inicializa o modelo (gemini-1.5-pro com a system instruction injetada hardcoded)
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-pro-preview-12-17",  // ✅ SUPORTE ATUAL
+            model: "gemini-1.5-pro",
             systemInstruction: SYSTEM_PROMPT
         });
 
