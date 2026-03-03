@@ -12,26 +12,28 @@ export default async function handler(req, res) {
         const { idea, context, objective } = req.body;
         const genAI = new GoogleGenerativeAI(apiKey);
         
-        // ✅ VERSÃO MODERNA E ESTÁVEL (2.0 Flash)
-        // Se quiser testar o Pro, use "gemini-2.0-pro-exp-02-05"
+        // ✅ O ID EXATO PARA O 2.0 PRO EM 2026
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash", 
+            model: "gemini-2.0-pro-exp-02-05" 
         });
 
-        const userPrompt = `Ideia: ${idea}\nContexto: ${context}\nObjetivo: ${objective}`;
+        // Montagem direta do conteúdo
+        const promptFinal = `${SYSTEM_PROMPT}\n\nUSER REQUEST:\nIdeia: ${idea}\nContexto: ${context}\nObjetivo: ${objective}`;
 
-        // No SDK mais novo, o envio é preferencialmente assim:
-        const result = await model.generateContent({
-            contents: [{ role: 'user', parts: [{ text: `${SYSTEM_PROMPT}\n\n${userPrompt}` }] }],
-        });
-
+        const result = await model.generateContent(promptFinal);
         const response = await result.response;
-        return res.status(200).json({ prompt: response.text().trim() });
+        const text = response.text();
+
+        if (!text) throw new Error("Resposta vazia da IA.");
+
+        return res.status(200).json({ prompt: text.trim() });
 
     } catch (error) {
-        console.error('ERRO GOOGLE:', error);
+        console.error('ERRO DETALHADO:', error);
+        
+        // Tratamento amigável do erro
         return res.status(500).json({ 
-            error: 'Erro no motor Gemini: ' + error.message 
+            error: 'Erro no motor Gemini 2.0 Pro: ' + error.message 
         });
     }
 }
