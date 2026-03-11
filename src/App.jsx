@@ -58,7 +58,7 @@ function App() {
                     <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ backgroundColor: goldFaint, color: gold }}>
                         <Sparkles size={18} />
                     </div>
-                    <h1 className="font-medium tracking-tight" style={{ color: gold, fontSize: '28px' }}>
+                    <h1 className="font-medium tracking-tight" style={{ color: gold, fontSize: '32px' }}>
     IMPACT <span style={{ color: goldDim }}>Prompt Generator</span>
                     </h1>
                 </div>
