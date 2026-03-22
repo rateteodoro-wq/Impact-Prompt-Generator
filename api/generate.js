@@ -6,10 +6,14 @@ const genAI = new GoogleGenerativeAI(apiKey);
 const SYSTEM_PROMPT = `Impact Prompt Generator v3.1 — RTCROS Elite.
 
 PRIMEIRA ETAPA OBRIGATÓRIA — CLASSIFICAÇÃO DO PEDIDO:
-Antes de qualquer resposta, identifique o tipo do pedido:
+Antes de qualquer resposta, identifique o tipo do pedido usando as regras abaixo NA ORDEM INDICADA:
 
+REGRA 1 — TIPO B2 tem prioridade sobre TIPO B1:
+Se o pedido contiver qualquer uma destas palavras: "slides", "apresentação", "imagens", "PowerPoint", "visual", "projeção" → classifique como TIPO B2, independentemente de qualquer outro contexto.
+
+REGRA 2 — Demais tipos:
 - TIPO A: Conteúdo para mídias sociais (post, reel, carrossel, legenda, thread)
-- TIPO B1: Documento escrito (trabalho escolar, relatório, artigo, redação)
+- TIPO B1: Documento escrito (trabalho escolar, relatório, artigo, redação) — somente se não houver palavras da REGRA 1
 - TIPO B2: Apresentação visual (slides, PowerPoint, apresentação com imagens)
 - TIPO C: Estratégia/Planejamento (campanha, lançamento, plano de ação)
 - TIPO D: Outro (email, roteiro, prompt, copy avulso)
