@@ -6,10 +6,20 @@ const goldDim = '#B8960C';
 const goldFaint = 'rgba(255, 215, 0, 0.15)';
 const goldBorder = 'rgba(255, 215, 0, 0.25)';
 
+const TIPOS = [
+    { value: '', label: 'Detectar automaticamente' },
+    { value: 'TIPO A', label: '📱 Post para redes sociais' },
+    { value: 'TIPO B1', label: '📄 Documento escrito' },
+    { value: 'TIPO B2', label: '🖼️ Apresentação com slides' },
+    { value: 'TIPO C', label: '📊 Estratégia / Planejamento' },
+    { value: 'TIPO D', label: '✉️ Outro (email, roteiro...)' },
+];
+
 function App() {
     const [idea, setIdea] = useState('');
     const [context, setContext] = useState('');
     const [objective, setObjective] = useState('');
+    const [tipo, setTipo] = useState('');
     const [generatedPrompt, setGeneratedPrompt] = useState('');
     const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -27,7 +37,7 @@ function App() {
             const response = await fetch('/api/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idea, context, objective }),
+                body: JSON.stringify({ idea, context, objective, tipo }),
             });
 
             const data = await response.json();
@@ -59,7 +69,7 @@ function App() {
                         <Sparkles size={18} />
                     </div>
                     <h1 className="font-medium tracking-tight" style={{ color: gold, fontSize: '32px' }}>
-    IMPACT <span style={{ color: goldDim }}>Prompt Generator</span>
+                        IMPACT <span style={{ color: goldDim }}>Prompt Generator</span>
                     </h1>
                 </div>
             </header>
@@ -91,6 +101,32 @@ function App() {
                                 }}
                                 placeholder="Ex: Quero um post de instagram sobre IA para advogados..."
                             />
+                        </div>
+
+                        {/* Tipo de Output */}
+                        <div className="space-y-2">
+                            <label className="block text-xs font-semibold tracking-wider uppercase" style={{ color: goldDim }}>
+                                Tipo de Output
+                            </label>
+                            <select
+                                value={tipo}
+                                onChange={(e) => setTipo(e.target.value)}
+                                className="w-full rounded-lg px-4 py-3 text-sm outline-none appearance-none cursor-pointer"
+                                style={{
+                                    backgroundColor: '#111',
+                                    border: `1px solid ${goldBorder}`,
+                                    color: tipo ? gold : goldDim,
+                                }}
+                            >
+                                {TIPOS.map((t) => (
+                                    <option key={t.value} value={t.value} style={{ backgroundColor: '#111', color: gold }}>
+                                        {t.label}
+                                    </option>
+                                ))}
+                            </select>
+                            <p className="text-xs" style={{ color: 'rgba(184,150,12,0.5)' }}>
+                                Selecione para garantir o formato correto. "Detectar automaticamente" pode errar em casos ambíguos.
+                            </p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
