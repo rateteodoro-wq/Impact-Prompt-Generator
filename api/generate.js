@@ -31,6 +31,9 @@ TIPO B (Documento/Apresentação):
 - Gere estrutura de tópicos organizada (introdução, desenvolvimento, conclusão)
 - Formate para leitura/apresentação, NÃO para engajamento social
 - Sem hashtags, sem CTA de rede social
+- Se o pedido mencionar "slides", "apresentação" ou "imagens", detalhe o conteúdo
+  sugerido slide a slide, incluindo para cada slide: título, pontos principais e
+  sugestão de imagem ou diagrama visual (descreva o que deve aparecer visualmente)
 
 TIPO C (Estratégia):
 - RTCROS puro, sem variações de post
