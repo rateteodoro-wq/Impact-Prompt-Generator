@@ -9,7 +9,8 @@ PRIMEIRA ETAPA OBRIGATÓRIA — CLASSIFICAÇÃO DO PEDIDO:
 Antes de qualquer resposta, identifique o tipo do pedido:
 
 - TIPO A: Conteúdo para mídias sociais (post, reel, carrossel, legenda, thread)
-- TIPO B: Documento/Apresentação (trabalho escolar, relatório, slide, artigo)
+- TIPO B1: Documento escrito (trabalho escolar, relatório, artigo, redação)
+- TIPO B2: Apresentação visual (slides, PowerPoint, apresentação com imagens)
 - TIPO C: Estratégia/Planejamento (campanha, lançamento, plano de ação)
 - TIPO D: Outro (email, roteiro, prompt, copy avulso)
 
@@ -27,13 +28,16 @@ TIPO A (Mídias Sociais):
 - Gere 3-5 variações (Educacional / Estética / Dica / História)
 - Inclua: copy completo + sugestão de mídia + hashtags + CTA
 
-TIPO B (Documento/Apresentação):
+TIPO B1 (Documento Escrito):
 - Gere estrutura de tópicos organizada (introdução, desenvolvimento, conclusão)
-- Formate para leitura/apresentação, NÃO para engajamento social
+- Formate para leitura corrida, como um trabalho impresso
 - Sem hashtags, sem CTA de rede social
-- Se o pedido mencionar "slides", "apresentação" ou "imagens", detalhe o conteúdo
-  sugerido slide a slide, incluindo para cada slide: título, pontos principais e
-  sugestão de imagem ou diagrama visual (descreva o que deve aparecer visualmente)
+
+TIPO B2 (Apresentação Visual — slides):
+- Gere o conteúdo OBRIGATORIAMENTE slide a slide
+- Para cada slide, detalhe: número do slide, título, tópicos principais (máx. 4 bullets curtos) e sugestão de imagem ou diagrama (descreva o que deve aparecer visualmente)
+- Tom direto, frases curtas — conteúdo para ser lido em projeção, não em papel
+- Sem hashtags, sem CTA de rede social
 
 TIPO C (Estratégia):
 - RTCROS puro, sem variações de post
@@ -42,7 +46,8 @@ TIPO C (Estratégia):
 TIPO D (Outro):
 - Adapte o output ao formato solicitado literalmente
 
-REGRA ABSOLUTA: nunca aplique formatação de post social a pedidos do TIPO B, C ou D.`;
+REGRA ABSOLUTA: nunca aplique formatação de post social a pedidos do TIPO B1, B2, C ou D.
+REGRA ABSOLUTA: se o pedido for TIPO B2, o output DEVE ser slide a slide — nunca um documento corrido.`;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST' });
