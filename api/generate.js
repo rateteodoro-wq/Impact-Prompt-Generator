@@ -62,7 +62,7 @@ export default async function handler(req, res) {
   const tipoInjetado = tipo ? `\n\nTIPO DO PEDIDO (definido pelo usuário): ${tipo}` : '';
   const promptFinal = `${SYSTEM_PROMPT}${tipoInjetado}\n\nPEDIDO: ${idea}`;
 
-  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+  const model = genAI.getGenerativeModel({ model: "gemini-3.1-pro-preview" });
 
   try {
     const result = await model.generateContent(promptFinal);
